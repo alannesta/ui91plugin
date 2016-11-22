@@ -1,5 +1,5 @@
 var query = {};	// flash query params to query the video url
-var regex = /(file|max_vid|seccode)=(.*?)&/g;
+var regex = /(file|max_vid|seccode)=(\w+)&/g;
 var flashParams = document.getElementsByClassName('videoplayer')[0].getElementsByTagName('embed')[0].attributes.flashvars;
 
 var matched;

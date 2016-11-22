@@ -1,19 +1,22 @@
-function getParams() {
-	return {seccode: window.so.variables.seccode, VID: window.so.variables.file, max_vid: window.so.variables.max_vid};
-}
-
+var query = {};	// flash query params to query the video url
 var regex = /(file|max_vid|seccode)=(.*?)&/g;
-// https://developer.chrome.com/extensions/messaging
-chrome.runtime.sendMessage({
- seccode: '40cff5d7f76e4a7f4eadff67796ceda0',
- max_vid: '187318',
- VID: '187261'
-}, function(response) {
-	console.log(response);
-});
 var flashParams = document.getElementsByClassName('videoplayer')[0].getElementsByTagName('embed')[0].attributes.flashvars;
-console.log(flashParams.textContent);
-console.log(flashParams.textContent.match(regex));
 
+var matched;
+while ((matched = regex.exec(flashParams.textContent)) !== null) {
+	console.log(matched);
+	if (matched[1] === 'file') {
+		query['VID'] = matched[2];
+	} else {
+		query[matched[1]] = matched[2];
+	}
+}
+if (query.VID && query.seccode && query.max_vid) {
+	// https://developer.chrome.com/extensions/messaging
+	// send message to popup/background script
+	chrome.runtime.sendMessage(query, function(response) {
+		console.log(response);
+	});
+}
 console.log('content script init');
 

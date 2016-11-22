@@ -4,7 +4,8 @@
   "permissions": [
     "tabs",
     "http://*/*",
-    "downloads"
+    "downloads",
+    "storage"
   ],
   "background": {
     "scripts": [

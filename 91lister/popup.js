@@ -1,4 +1,12 @@
 var videoUrl = '';
+var clientMessage = null; // message from client
+/*
+ Bootstrapping plugin:
+ 1. bind download event listener
+ 2. inject/execute content script in current tab
+ 3. retrieve download history
+ 4. setup message handler
+ */
 
 window.onload = function() {
 	document.getElementById('download').addEventListener('click', function() {
@@ -9,12 +17,18 @@ window.onload = function() {
 				saveAs: true
 			}, function (downloadId) {
 				console.log('Download with: ' + downloadId);
+
 			});
 		} else {
 			console.log('nothing to download');
 		}
 	});
 
+	document.getElementById('clear').addEventListener('click', function() {
+		chrome.storage.sync.clear();
+	});
+
+	// programmatically inject content script
 	chrome.windows.getCurrent(function(currentWindow) {
 		chrome.tabs.query({active: true, windowId: currentWindow.id},
 			function(activeTabs) {
@@ -23,17 +37,38 @@ window.onload = function() {
 			});
 	});
 
+	// retrieve download history
+	// TODO: only show recent downloads
+	chrome.storage.sync.get(function(historyDownloads) {
+		console.log(historyDownloads);
+		var innerHTML = '';
+		Object.keys(historyDownloads).forEach(function(key) {
+			innerHTML += '<div><span class="videoName">' + key + '</span><span class="date"> --- '+ historyDownloads[key] +'</span></div>'
+		});
+		document.getElementById('recent-downloads').innerHTML = innerHTML;
+	});
+
+	// message handler
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+		clientMessage = request;
 		// console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
-		if (request.seccode) {
-			//make network request
-			var queryUrl = 'http://www.91porn.com/getfile.php?VID=' + request.VID + '&mp4=0&seccode=' + request.seccode + '&max_vid=' + request.max_vid;
+		if (request.flashParams.seccode) {
+			//make network request to get the file url;
+			var queryUrl = 'http://www.91porn.com/getfile.php?VID=' + request.flashParams.VID + '&mp4=0&seccode=' + request.flashParams.seccode + '&max_vid=' + request.flashParams.max_vid;
 			requestPage(queryUrl);
+
 			sendResponse('Roger that');
 		} else {
 			alert('Could not parse params from page');
 		}
 	});
+
+	chrome.downloads.onCreated.addListener(function() {
+		console.log('download start, save to history');
+		var entry = {};
+		entry[clientMessage.videoTitle] = new Date().toLocaleString();
+		chrome.storage.sync.set(entry);
+	})
 };
 
 function requestPage(url) {

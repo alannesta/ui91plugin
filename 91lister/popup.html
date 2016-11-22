@@ -4,12 +4,32 @@
 	<meta charset="UTF-8">
 	<title>Title</title>
 	<script src="./popup.js"></script>
+	<style>
+		span.videoName {
+			max-width: 210px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+			display: inline-block;
+		}
+
+		span.date {
+			display: inline-block;
+		}
+	</style>
 </head>
 <body>
-	<h1>Parsed Url</h1>
-	<div id="url"></div>
-	<div>
-		<button id="download">Download</button>
-	</div>
+	<section style="width: 400px;">
+		<h4>video url:</h4>
+		<div id="url" style="margin-bottom: 10px;"></div>
+		<div>
+			<button id="download">Download</button><button id="clear">Clear history(dev)</button>
+		</div>
+		<div style="margin-bottom: 10px;">
+			<h4>Recent downloads</h4>
+			<div id="recent-downloads"></div>
+		</div>
+	</section>
+
 </body>
 </html>

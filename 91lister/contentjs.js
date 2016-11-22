@@ -1,7 +1,7 @@
 var query = {};	// flash query params to query the video url
 var regex = /(file|max_vid|seccode)=(\w+)&/g;
 var flashParams = document.getElementsByClassName('videoplayer')[0].getElementsByTagName('embed')[0].attributes.flashvars;
-
+var videoTitle = document.getElementById('viewvideo-title').innerText;
 var matched;
 while ((matched = regex.exec(flashParams.textContent)) !== null) {
 	console.log(matched);
@@ -14,7 +14,10 @@ while ((matched = regex.exec(flashParams.textContent)) !== null) {
 if (query.VID && query.seccode && query.max_vid) {
 	// https://developer.chrome.com/extensions/messaging
 	// send message to popup/background script
-	chrome.runtime.sendMessage(query, function(response) {
+	chrome.runtime.sendMessage({
+		flashParams: query,
+		videoTitle: videoTitle
+	}, function(response) {
 		console.log(response);
 	});
 }

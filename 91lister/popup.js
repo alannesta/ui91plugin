@@ -1,10 +1,11 @@
-var url = '';
+var videoUrl = '';
 
 window.onload = function() {
 	document.getElementById('download').addEventListener('click', function() {
-		if (url.length > 0) {
+		if (videoUrl.length > 0) {
+			console.log('start download: ' + videoUrl);
 			chrome.downloads.download({
-				url: url,
+				url: videoUrl,
 				saveAs: true
 			}, function (downloadId) {
 				console.log('Download with: ' + downloadId);
@@ -18,7 +19,7 @@ window.onload = function() {
 		chrome.tabs.query({active: true, windowId: currentWindow.id},
 			function(activeTabs) {
 				chrome.tabs.executeScript(
-					activeTabs[0].id, {file: 'contentjs.js', allFrames: true});
+					activeTabs[0].id, {file: 'contentjs.js'});
 			});
 	});
 
@@ -26,7 +27,7 @@ window.onload = function() {
 		// console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
 		if (request.seccode) {
 			//make network request
-			var queryUrl = 'http://email.91dizhi.at.gmail.com.8h5.space/getfile.php?VID=' + request.VID + '&mp4=0&seccode=' + request.seccode + '&max_vid=' + request.max_vid;
+			var queryUrl = 'http://www.91porn.com/getfile.php?VID=' + request.VID + '&mp4=0&seccode=' + request.seccode + '&max_vid=' + request.max_vid;
 			requestPage(queryUrl);
 			sendResponse('Roger that');
 		} else {
@@ -37,17 +38,29 @@ window.onload = function() {
 
 function requestPage(url) {
 	var xhr = new XMLHttpRequest();
-
-	xhr.open("url", false);
+	xhr.open("GET", url, true);
 	xhr.send();
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
-			// WARNING! Might be evaluating an evil script!
-			// console.log(result);
-			url = xhr.responseText;
+			console.log('request success');
+
+			//console.log(xhr.responseText);
+			var stripped = decodeURIComponent(xhr.responseText).split('file=')[1];
+
+			videoUrl = parseFileUrl(stripped);
 			// update the url in popup.html
-			document.getElementById('url').innerHTML = url;
+			document.getElementById('url').innerHTML = videoUrl;
 		}
+	}
+}
+
+function parseFileUrl(url) {
+	var regex = /\/\/dl\/\//;
+	if (regex.test(url) && url.indexOf('&domainUrl') > -1) {
+		var result = url.replace(regex, '/dl/');
+		return result.slice(0, result.indexOf('&domainUrl'));
+	} else {
+		return url;
 	}
 }

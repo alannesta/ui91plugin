@@ -3,7 +3,8 @@
   "version": "2.0",
   "permissions": [
     "tabs",
-    "http://*/*"
+    "http://*/*",
+    "downloads"
   ],
   "background": {
     "scripts": [
@@ -11,16 +12,17 @@
     ],
     "persistent": false
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "http://www.sinoquebec.com/bbs/*"
-      ],
-      "js": [
-        "contentjs.js"
-      ]
-    }
-  ],
+//  "content_scripts": [
+//    {
+//      "matches": [
+//        "http://email.91dizhi.at.gmail.com.8h5.space/*",
+//        "http://www.91porn.com/*"
+//      ],
+//      "js": [
+//        "contentjs.js"
+//      ]
+//    }
+//  ],
    "browser_action": {
        "default_title": "Video",
        "default_popup": "popup.html"

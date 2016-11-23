@@ -41,10 +41,15 @@ window.onload = function() {
 	// TODO: only show recent downloads
 	chrome.storage.sync.get(function(historyDownloads) {
 		console.log(historyDownloads);
+		var sortedHistory = sortHistory(historyDownloads);
 		var innerHTML = '';
-		Object.keys(historyDownloads).forEach(function(key) {
-			innerHTML += '<div><span class="videoName">' + key + '</span><span class="date"> --- '+ historyDownloads[key] +'</span></div>'
-		});
+		var length = sortedHistory.length > 10? 10: sortedHistory.length;	// only show 10 entries
+		for (var i = 0; i < length; i++) {
+			innerHTML += '<div><span class="videoName">' + sortedHistory[i].name + '</span><span class="date"> --- '+ sortedHistory[i].date.toLocaleString() +'</span></div>'
+		}
+		// Object.keys(historyDownloads).forEach(function(key) {
+		// 	innerHTML += '<div><span class="videoName">' + key + '</span><span class="date"> --- '+ historyDownloads[key] +'</span></div>'
+		// });
 		document.getElementById('recent-downloads').innerHTML = innerHTML;
 	});
 
@@ -98,4 +103,21 @@ function parseFileUrl(url) {
 	} else {
 		return url;
 	}
+}
+
+function sortHistory(historyObj) {
+	var orderedArray = [];
+	Object.keys(historyObj).forEach(function(key) {
+		orderedArray.push({name: key, date: new Date(historyObj[key])});
+	});
+	return orderedArray.sort(function(a, b) {
+		// the latest will be at the top of the ordered array;
+		if (a[date] > b[date]) {
+			return -1;
+		}
+		if (a[date] === b[date]) {
+			return 0;
+		}
+		return 1;
+	});
 }

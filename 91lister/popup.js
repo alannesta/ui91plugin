@@ -112,10 +112,10 @@ function sortHistory(historyObj) {
 	});
 	return orderedArray.sort(function(a, b) {
 		// the latest will be at the top of the ordered array;
-		if (a[date] > b[date]) {
+		if (a.date > b.date) {
 			return -1;
 		}
-		if (a[date] === b[date]) {
+		if (a.date === b.date) {
 			return 0;
 		}
 		return 1;

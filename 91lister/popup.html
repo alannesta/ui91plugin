@@ -16,19 +16,46 @@
 		span.date {
 			display: inline-block;
 		}
+
+		button {
+			margin-right: 5px;
+		}
+
+		.message {
+			padding: 3px;
+		}
+
+		span#message {
+			background: cyan;
+			font-size: 14px;
+			font-family: sans-serif;
+		}
+
+		div.url {
+			width: 400px;
+			padding: 5px;
+		}
+
 	</style>
 </head>
 <body>
 	<section style="width: 400px;">
 		<h4>video url:</h4>
-		<div id="url" style="margin-bottom: 10px;"></div>
+		<div class="url" style="margin-bottom: 10px;">
+			<span id="url">not video url parsed</span>
+		</div>
 		<div>
-			<button id="download">Download</button><button id="clear">Clear history(dev)</button>
+			<button id="download">Download</button>
+			<button id="upload">Dropbox</button>
+			<button id="clear">Clear history(dev)</button>
 		</div>
 		<div style="margin-bottom: 10px;">
 			<h4>Recent downloads</h4>
 			<div id="recent-downloads"></div>
 		</div>
+	</section>
+	<section class="message">
+		<span id="message"></span>
 	</section>
 
 </body>

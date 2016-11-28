@@ -21,6 +21,25 @@ window.onload = function() {
 			});
 		} else {
 			console.log('nothing to download');
+			showMessage('nothing to download');
+		}
+	});
+
+	document.getElementById('upload').addEventListener('click', function() {
+		if (videoUrl.length > 0) {
+			console.log('upload to dropbox: ' + videoUrl);
+			// using background script to perform the job
+			chrome.runtime.sendMessage({
+				action: 'upload',
+				videoUrl: videoUrl,
+				videoTitle: clientMessage.videoTitle || 'video'+ Math.random().toFixed(3).split('.')[1]	// potential bug: click upload before url parsed
+			}, function(response) {
+				console.log(response);
+			});
+		} else {
+			console.log('nothing to upload to dropbox');
+			showMessage('nothing to upload to dropbox');
+
 		}
 	});
 
@@ -65,11 +84,13 @@ window.onload = function() {
 			sendResponse('Roger that');
 		} else {
 			alert('Could not parse params from page');
+			showMessage('Could not resolve flash params from content page');
 		}
 	});
 
 	chrome.downloads.onCreated.addListener(function() {
-		console.log('download start, save to history');
+		showMessage('Start downloading, adding to history');
+		setTimeout(clearMessage, 6000);
 		var entry = {};
 		entry[clientMessage.videoTitle] = new Date().toLocaleString();
 		chrome.storage.sync.set(entry);
@@ -86,11 +107,16 @@ function requestPage(url) {
 			console.log('request success');
 
 			//console.log(xhr.responseText);
-			var stripped = decodeURIComponent(xhr.responseText).split('file=')[1];
+			try {
+				var stripped = decodeURIComponent(xhr.responseText).split('file=')[1];
 
-			videoUrl = parseFileUrl(stripped);
-			// update the url in popup.html
-			document.getElementById('url').innerHTML = videoUrl;
+				videoUrl = parseFileUrl(stripped);
+				// update the url in popup.html
+				document.getElementById('url').innerHTML = videoUrl;
+			} catch(err) {
+				showMessage('Could not resolve video urls with flash params');
+			}
+
 		}
 	}
 }
@@ -120,4 +146,12 @@ function sortHistory(historyObj) {
 		}
 		return 1;
 	});
+}
+
+function showMessage(msg) {
+	document.getElementById('message').innerText = msg;
+}
+
+function clearMessage() {
+	document.getElementById('message').innerText = '';
 }

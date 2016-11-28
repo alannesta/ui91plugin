@@ -4,6 +4,7 @@
   "permissions": [
     "tabs",
     "http://*/*",
+    "https://*/*",
     "downloads",
     "storage"
   ],
@@ -13,17 +14,6 @@
     ],
     "persistent": false
   },
-//  "content_scripts": [
-//    {
-//      "matches": [
-//        "http://email.91dizhi.at.gmail.com.8h5.space/*",
-//        "http://www.91porn.com/*"
-//      ],
-//      "js": [
-//        "contentjs.js"
-//      ]
-//    }
-//  ],
    "browser_action": {
        "default_title": "Video",
        "default_popup": "popup.html"

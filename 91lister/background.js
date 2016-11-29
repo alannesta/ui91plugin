@@ -5,7 +5,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		console.log(request.action);
 		xhrReadBlob(request.videoUrl, request.videoTitle);
 	}
-
 });
 
 function xhrReadBlob(url, videoTitle) {
@@ -15,6 +14,8 @@ function xhrReadBlob(url, videoTitle) {
 
 	oReq.onload = function(oEvent) {
 		console.log('finish stream, start upload to dropbox');
+		showNotification('Upload', 'finish download, start upload to dropbox');
+
 		xhrUpload(oReq.response, videoTitle);
 	};
 
@@ -40,6 +41,8 @@ function xhrUpload(blob, videoTitle) {
 	oReq.onload = function (oEvent) {
 		// Uploaded.
 		console.log('upload successful');
+		showNotification('Upload Finished', 'Successfully uploaded to dropbox');
+
 	};
 	oReq.send(blob);
 }
@@ -51,4 +54,14 @@ function updateProgress(oEvent) {
 	} else {
 		console.log('cannot show progress');
 	}
+}
+
+
+function showNotification(title, msg) {
+	chrome.notifications.create({
+		type: 'basic',
+		title: title,
+		message: msg,
+		iconUrl: './assets/sdd.jpg'
+	});
 }

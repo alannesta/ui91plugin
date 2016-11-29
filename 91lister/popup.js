@@ -28,6 +28,8 @@ window.onload = function() {
 	document.getElementById('upload').addEventListener('click', function() {
 		if (videoUrl.length > 0) {
 			console.log('upload to dropbox: ' + videoUrl);
+			showMessage('upload to dropbox: ' + videoUrl);
+
 			// using background script to perform the job
 			chrome.runtime.sendMessage({
 				action: 'upload',

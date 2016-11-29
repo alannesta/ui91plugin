@@ -6,7 +6,8 @@
     "http://*/*",
     "https://*/*",
     "downloads",
-    "storage"
+    "storage",
+    "notifications"
   ],
   "background": {
     "scripts": [
